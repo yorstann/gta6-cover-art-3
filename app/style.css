@@ -1,12 +1,275 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
-body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+/* Vice Frame 3 — editor styling. A dark print-shop theme: deep ink panels,
+   poster-yellow accents, condensed display type where the browser has it. */
+
+@font-face {
+  font-family: 'Anton';
+  src: url('./fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #14101d;
+  color: #f2eef7;
+  font: 15px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 28px 14px;
+  background: linear-gradient(120deg, #1d1033 0%, #33103a 55%, #4a1230 100%);
+  border-bottom: 3px solid #ffcf3f;
+}
+
+.brand h1 {
+  margin: 0;
+  font-family: Anton, 'Arial Narrow Bold', sans-serif;
+  font-size: 40px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brand h1 span { color: #ffcf3f; }
+
+.brand p {
+  margin: 6px 0 0;
+  max-width: 560px;
+  color: #cfc4de;
+}
+
+.export-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.export-box label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #cfc4de;
+}
+
+.history { display: flex; gap: 8px; }
+
+button {
+  font: inherit;
+  font-weight: 700;
+  padding: 9px 14px;
+  border: 2px solid #4a3f63;
+  border-radius: 8px;
+  background: #241b38;
+  color: #f2eef7;
+  cursor: pointer;
+}
+
+button:hover { border-color: #ffcf3f; }
+button:disabled { opacity: 0.4; cursor: default; }
+button:disabled:hover { border-color: #4a3f63; }
+
+button.primary {
+  background: #ffcf3f;
+  border-color: #ffcf3f;
+  color: #17102a;
+}
+
+button.primary:hover { background: #ffd95e; }
+
+button.surprise {
+  background: #ff5e8a;
+  border-color: #ff5e8a;
+  color: #fff;
+}
+
+button.surprise:hover { background: #ff7099; }
+
+select, input[type='text'] {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid #4a3f63;
+  border-radius: 7px;
+  background: #1a1429;
+  color: #f2eef7;
+}
+
+input[type='range'] { accent-color: #ffcf3f; width: 100%; }
+input[type='checkbox'] { accent-color: #ffcf3f; width: 16px; height: 16px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  padding: 22px 28px 30px;
+  align-items: start;
+}
+
+.stage canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #0a0614;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
+  cursor: grab;
+  touch-action: none;
+}
+
+.stage canvas:active { cursor: grabbing; }
+
+.hint { color: #9a8fb2; font-size: 13px; margin: 10px 0 0; }
+
+.strip-title { font-size: 16px; margin: 20px 0 8px; }
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.thumb {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  padding: 7px;
+  width: 138px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.thumb canvas { width: 120px; height: 84px; border-radius: 4px; }
+
+.upload-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 9px 14px;
+  border: 2px dashed #4a3f63;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.upload-btn:hover { border-color: #ffcf3f; }
+.upload-btn input { display: none; }
+
+#status { color: #ffd98a; min-height: 1.4em; margin: 12px 0 0; }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.controls section {
+  background: #1d1730;
+  border: 1px solid #322a4d;
+  border-radius: 12px;
+  padding: 14px 16px 16px;
+}
+
+.controls h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.controls h2 .note {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 12px;
+  color: #9a8fb2;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 13.5px;
+  margin-bottom: 10px;
+}
+
+.controls label.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+}
+
+.field-label { font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.swatch {
+  padding: 6px 11px;
+  font-size: 13px;
+  border-radius: 999px;
+}
+
+.swatch.active {
+  background: #ffcf3f;
+  border-color: #ffcf3f;
+  color: #17102a;
+}
+
+.panels { display: flex; flex-direction: column; gap: 10px; }
+
+.panel-row {
+  border: 1px solid #322a4d;
+  border-radius: 9px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.panel-row.active { border-color: #ffcf3f; }
+
+.panel-head {
+  text-align: left;
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  font-size: 13.5px;
+}
+
+.panel-row label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  font-size: 12.5px;
+}
+
+.panel-row label span { flex: 0 0 52px; }
+.panel-row label select, .panel-row label input { flex: 1; min-width: 0; }
+
+/* Screenshot modes (shots.json): ?shot=cover fills the window with the
+   cover alone at export aspect; ?shot=editor keeps the whole page. */
+body.shot-cover .topbar,
+body.shot-cover .controls,
+body.shot-cover .hint,
+body.shot-cover .strip-title,
+body.shot-cover .strip,
+body.shot-cover .upload-btn,
+body.shot-cover #status { display: none; }
+
+body.shot-cover .layout { display: block; padding: 0; }
+body.shot-cover .stage canvas { width: 100vw; height: 100vh; box-shadow: none; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}

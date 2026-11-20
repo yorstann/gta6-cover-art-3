@@ -3,21 +3,98 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Frame 3 — Poster Cover Maker</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
+<header class="topbar">
+  <div class="brand">
+    <h1>Vice Frame <span>3</span></h1>
+    <p>Your photos, posterised: six multi-panel layouts, a colour grade per panel, starburst stickers and magazine cover lines — exported as a PNG. Everything happens on this machine; pictures are never uploaded.</p>
+  </div>
+  <div class="export-box">
+    <label>Post size
+      <select id="size">
+        <option value="square">Square · 1080 × 1080</option>
+        <option value="portrait">Portrait · 1080 × 1350</option>
+        <option value="landscape" selected>Landscape · 1920 × 1080</option>
+      </select>
+    </label>
+    <button id="exportBtn" type="button" class="primary">Export PNG</button>
+    <button id="surprise" type="button" class="surprise">★ Surprise me</button>
+    <div class="history">
+      <button id="undoBtn" type="button" title="Undo (Ctrl+Z)">↩ Undo</button>
+      <button id="redoBtn" type="button" title="Redo (Ctrl+Shift+Z)">↪ Redo</button>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage">
+    <canvas id="preview" width="1152" height="648" aria-label="Live cover preview"></canvas>
+    <p class="hint">Click a panel to select it · drag inside a panel to reposition its picture · scroll to zoom it</p>
+    <h2 class="strip-title">Pictures — built-in scenes and photos, or yours</h2>
+    <div id="strip" class="strip"></div>
+    <label class="upload-btn">Add your photos
+      <input id="upload" type="file" accept="image/*" multiple>
+    </label>
     <p id="status" role="status"></p>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <aside class="controls">
+    <section>
+      <h2>Layout</h2>
+      <div id="templates" class="swatches"></div>
+    </section>
+    <section>
+      <h2>Colour grade <span class="note">— cover-wide; each panel can override it below</span></h2>
+      <div id="grades" class="swatches"></div>
+    </section>
+    <section>
+      <h2>Caption</h2>
+      <label>Main line <input id="caption" type="text" maxlength="42" value="PALMERA HEAT"></label>
+      <label>Sub line <input id="subcaption" type="text" maxlength="48" value="ONE CITY • NO BRAKES"></label>
+      <div class="field-label">Lettering</div>
+      <div id="themes" class="swatches"></div>
+      <label>Position
+        <select id="captionPos">
+          <option value="bottom" selected>Bottom</option>
+          <option value="top">Top</option>
+        </select>
+      </label>
+      <label>Size <input id="captionScale" type="range" min="0.6" max="1.5" step="0.02" value="1"></label>
+      <label class="check"><input id="skew" type="checkbox" checked> Poster slant</label>
+    </section>
+    <section>
+      <h2>Starburst badge</h2>
+      <label class="check"><input id="badgeOn" type="checkbox" checked> Show the starburst sticker</label>
+      <label>Badge text <input id="badgeText" type="text" maxlength="26" value="PALMERA CITY"></label>
+      <label>Rotation <input id="badgeAngle" type="range" min="-40" max="40" step="1" value="-10"></label>
+    </section>
+    <section>
+      <h2>Bottom banner</h2>
+      <label class="check"><input id="bannerOn" type="checkbox"> Show the banner strip</label>
+      <label>Banner text <input id="bannerText" type="text" maxlength="60" value="THE HEAT ISSUE — OUT NOW"></label>
+    </section>
+    <section>
+      <h2>Cover lines <span class="note">— headline strips for the Cover Lines layout</span></h2>
+      <label>Headline 1 <input class="headline-input" type="text" maxlength="40" value="VICE CITY HEAT WAVE"></label>
+      <label>Headline 2 <input class="headline-input" type="text" maxlength="40" value="THE GETAWAY ISSUE"></label>
+      <label>Headline 3 <input class="headline-input" type="text" maxlength="40" value="PALMS, NEON &amp; HORSEPOWER"></label>
+    </section>
+    <section>
+      <h2>Poster finish</h2>
+      <label class="check"><input id="sunburst" type="checkbox" checked> Sunburst behind the hero panel</label>
+      <label class="check"><input id="halftone" type="checkbox" checked> Halftone print texture</label>
+      <button id="fillAll" type="button">One photo, every panel</button>
+    </section>
+    <section>
+      <h2>Panels</h2>
+      <div id="panels" class="panels"></div>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<script type="module" src="./src/editor-app.js"></script>
 </body>
 </html>
